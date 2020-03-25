@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <conio.h>
+
+#define THIS_DAY 25
+#define THIS_MONTH 03
+#define THIS_YEAR 2020
+
+struct work_man //структура хранящая данные на одного человека
+{
+	char fio[128]; //массив символов для имени
+	int k_children; //количество детей
+	char c_data[15][11]; //даты рождения детей
+};
+
+int main(int argc, char *argv[])
+{
+	setlocale(LC_ALL, "Russian");
+	const int N = 3;
+	int posobie = 0;
+	char bufYear[5];
+	char bufDay[3];
+	char bufMonth[3];
+
+	struct work_man people[N]; //создаем массив людей
+
+	for (int i = 0; i < N; i++) //заполняем его данными
+	{
+		printf("Введите ФИО рабочего:\n");
+		fgets(people[i].fio, 128, stdin);
+
+		printf("Сколько детей?\n");
+		scanf_s("%d", &people[i].k_children);
+
+		while (getchar() != '\n'); 
+
+		printf("Введите [год.месяц.день] детей:\n");
+		for (int j = 0; j < people[i].k_children; j++) //т к детей много то для каждого нужно ввести дату рождения
+		{
+			fgets(people[i].c_data[j], 11, stdin); //считали дату в формате год.месяц.день
+			
+		}
+		while (getchar() != '\n')
+		{
+			if (j == people[i].k_children - 1) getchar();
+		}
+	}
+
+	
+
+	for (int i = 0; i < N; i++)
+	{
+		printf(" \n ФИО - ");
+		puts(people[i].fio);
+		printf("%s\n", people[i].fio);
+		printf("Кол-во детей - %d\n", people[i].k_children);
+		printf("[год.месяц.день] детей- \n");
+
+		for (int j = 0; j < people[i].k_children; j++) //выводим даты рождения всех детей
+		{
+			puts(people[i].c_data[j]);
+
+			for (int k = 0; k < 4; k++) //заполняем массив buf только годом рождения
+				bufYear[k] = people[i].c_data[j][k];
+			for (int k = 0; k < 2; k++)
+				bufMonth[k] = people[i].c_data[j][k + 5];
+			for (int k = 0; k < 2; k++)
+				bufDay[k] = people[i].c_data[j][k + 8];
+
+			int age = THIS_YEAR - atoi(bufYear);
+			if ((atoi(bufMonth) == THIS_MONTH && atoi(bufDay) > THIS_DAY) || atoi(bufMonth) > THIS_MONTH) {
+				age -= 1;
+			}
+
+			if (age < 18) //считаем возраст  ребенка чтобы понять нужно ли пособие
+			{
+				posobie += 500;
+			}
+		}
+
+		printf("Пособие: %d рублей\n ", posobie); //выводим пособие
+		posobie = 0;
+	}
+	_getch();
+	return 0;
+}
